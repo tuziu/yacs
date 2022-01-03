@@ -27,16 +27,12 @@ fn print_context(context: &Vec<Context>) {
 fn reject(config: &Vec<Variable<QueensVar>>, context: &Vec<Context>) -> bool {
     context.last().map_or(false, |t| {
         let var_id = t.var_id;
-        let current = &config[var_id];
         for i in 0..var_id {
-            // printState(mill, pos);
-            let local = &config[i];
-            let d = current.state().is_valid(
-                local.state(),
+            if ! config[var_id].state().is_valid(
+                config[i].state(),
                 context[var_id].partial.unwrap(),
                 context[i].partial.unwrap(),
-            );
-            if !d {
+            ) {
                 return true;
             }
         }
@@ -108,7 +104,7 @@ fn backtrack(config: &Vec<Variable<QueensVar>>) -> bool {
 }
 
 fn main() {
-    let n = 20;
+    let n = 31;
     let config: Vec<Variable<QueensVar>> = (0..n)
         .map(|i| Variable::new(QueensVar::new(i), (0..n).map(|j| j as EnTy).collect(), i))
         .collect();
