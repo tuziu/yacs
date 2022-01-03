@@ -1,11 +1,11 @@
 use crate::var_des::VarDes;
-use std::cell::Cell;
+// use std::cell::Cell;
 
 pub type EnTy = i32;
 pub type VarId = usize;
 
 pub struct Variable<T> {
-    partial: Cell<Option<EnTy>>,
+    // partial: Cell<Option<EnTy>>,
     state: T,
     domain: Vec<EnTy>,
     id: VarId,
@@ -19,27 +19,15 @@ impl<T: VarDes> Variable<T> {
             state: t,
             id: i,
             domain: d,
-            partial: Cell::new(Option::None),
+            // partial: Cell::new(Option::None),
         }
     }
 
-    pub fn get_state(&self) -> &T {
+    pub fn state(&self) -> &T {
         &self.state
     }
     pub fn get_domain(&self) -> &Vec<EnTy> {
         &self.domain
-    }
-
-    pub fn set_partial(&self, partial: EnTy) {
-        self.partial.set(Some(partial));
-    }
-
-    pub fn reset_partial(&self) {
-        self.partial.set(None);
-    }
-
-    pub fn get_partial(&self) -> Option<EnTy> {
-        self.partial.get()
     }
 
     // pub fn remove(&self, _value: EnTy) -> Option<usize> {

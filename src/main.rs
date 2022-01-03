@@ -21,19 +21,18 @@ fn print_context(context: &Vec<Context>) {
             )
         })
         .collect();
-    let dd = d.concat();
-    println!(" {} ", dd);
+    println!(" {} ", d.concat());
 }
 
 fn reject(config: &Vec<Variable<QueensVar>>, context: &Vec<Context>) -> bool {
-    if !context.is_empty() {
-        let var_id = context.last().unwrap().var_id;
+    context.last().map_or(false, |t| {
+        let var_id = t.var_id;
         let current = &config[var_id];
         for i in 0..var_id {
             // printState(mill, pos);
             let local = &config[i];
-            let d = current.get_state().is_valid(
-                local.get_state(),
+            let d = current.state().is_valid(
+                local.state(),
                 context[var_id].partial.unwrap(),
                 context[i].partial.unwrap(),
             );
@@ -41,9 +40,10 @@ fn reject(config: &Vec<Variable<QueensVar>>, context: &Vec<Context>) -> bool {
                 return true;
             }
         }
-    }
-    false
+        false
+    })
 }
+
 fn accept(config: &Vec<Variable<QueensVar>>, context: &Vec<Context>) -> bool {
     config.len() <= context.len()
 }
@@ -108,7 +108,7 @@ fn backtrack(config: &Vec<Variable<QueensVar>>) -> bool {
 }
 
 fn main() {
-    let n = 30;
+    let n = 20;
     let config: Vec<Variable<QueensVar>> = (0..n)
         .map(|i| Variable::new(QueensVar::new(i), (0..n).map(|j| j as EnTy).collect(), i))
         .collect();
