@@ -1,6 +1,6 @@
 // use crate::grinder::config_tank::ConfigTank;
 use crate::var_des::VarDes;
-use crate::variable::EnTy;
+use crate::variable::{EnTy, Variable};
 
 #[derive(Copy, Clone)]
 pub struct QueensVar {
@@ -20,6 +20,13 @@ impl VarDes for QueensVar {
     fn is_valid(&self, other: &Self, current: EnTy, checked: EnTy) -> bool {
         ((self.get_x() - other.get_x()).abs() != (current - checked).abs()) && current != checked
     }
+}
+
+pub fn buildQueens(n: usize) -> Vec<Variable<QueensVar>>{
+    let config: Vec<Variable<QueensVar>> = (0..n)
+        .map(|i| Variable::new(QueensVar::new(i), (0..n).map(|j| j as EnTy).collect(), i))
+        .collect();
+    config
 }
 
 // fn is_oblique(left: (EnTy, EnTy), right: (EnTy, EnTy)) -> bool {

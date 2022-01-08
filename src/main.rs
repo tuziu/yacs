@@ -1,5 +1,5 @@
 // use std::env::current_dir;
-use mylib::{queens::QueensVar, var_des::VarDes, variable::Variable};
+use mylib::{queens::*, sudoku::*, var_des::VarDes, variable::Variable};
 
 type VarId = usize;
 type EnTy = i32;
@@ -24,11 +24,11 @@ fn print_context(context: &Vec<Context>) {
     println!(" {} ", d.concat());
 }
 
-fn reject(config: &Vec<Variable<QueensVar>>, context: &Vec<Context>) -> bool {
+fn reject<T: VarDes>(config: &Vec<Variable<T>>, context: &Vec<Context>) -> bool {
     context.last().map_or(false, |t| {
         let var_id = t.var_id;
         for i in 0..var_id {
-            if ! config[var_id].state().is_valid(
+            if !config[var_id].state().is_valid(
                 config[i].state(),
                 context[var_id].partial.unwrap(),
                 context[i].partial.unwrap(),
@@ -40,11 +40,11 @@ fn reject(config: &Vec<Variable<QueensVar>>, context: &Vec<Context>) -> bool {
     })
 }
 
-fn accept(config: &Vec<Variable<QueensVar>>, context: &Vec<Context>) -> bool {
+fn accept<T: VarDes>(config: &Vec<Variable<T>>, context: &Vec<Context>) -> bool {
     config.len() <= context.len()
 }
 
-fn first(config: &Vec<Variable<QueensVar>>, context: &mut Vec<Context>) -> bool {
+fn first<T: VarDes>(config: &Vec<Variable<T>>, context: &mut Vec<Context>) -> bool {
     let v = config[0].get_domain().first().unwrap();
     context.push(Context {
         var_id: context.len(),
@@ -54,7 +54,7 @@ fn first(config: &Vec<Variable<QueensVar>>, context: &mut Vec<Context>) -> bool 
     true
 }
 
-fn next(config: &Vec<Variable<QueensVar>>, context: &mut Vec<Context>) -> bool {
+fn next<T: VarDes>(config: &Vec<Variable<T>>, context: &mut Vec<Context>) -> bool {
     let tmp = context.last_mut().unwrap();
     let next_dom_id = tmp.domain_ele_id + 1;
     if next_dom_id >= config[tmp.var_id].get_domain().len() {
@@ -65,7 +65,7 @@ fn next(config: &Vec<Variable<QueensVar>>, context: &mut Vec<Context>) -> bool {
     true
 }
 
-fn backtrack_int(config: &Vec<Variable<QueensVar>>, context: &mut Vec<Context>) -> bool {
+fn backtrack_int<T: VarDes>(config: &Vec<Variable<T>>, context: &mut Vec<Context>) -> bool {
     // print_context(context);
     if reject(config, context) {
         return false;
@@ -96,7 +96,7 @@ fn ele_to_str(e: (usize, &Context)) -> String {
     // String::new()
 }
 
-fn backtrack(config: &Vec<Variable<QueensVar>>) -> bool {
+fn backtrack<T: VarDes>(config: &Vec<Variable<T>>) -> bool {
     let mut context = Vec::with_capacity(config.len());
     backtrack_int(config, &mut context);
     print_solution(&context);
@@ -105,19 +105,8 @@ fn backtrack(config: &Vec<Variable<QueensVar>>) -> bool {
 
 fn main() {
     let n = 31;
-    let config: Vec<Variable<QueensVar>> = (0..n)
-        .map(|i| Variable::new(QueensVar::new(i), (0..n).map(|j| j as EnTy).collect(), i))
-        .collect();
+    // let config = buildQueens(n);
+    let config = buildSudoku();
 
     backtrack(&config);
-    // let mut b = ConfigTankBuilder::new();
-    // add_variable(QueensVar::new(0))
-    //     .with_domain((1..4).map(|i| i as EnTy).collect())
-    //     .to(&mut b);
-    // for i in 1..4 {
-    //     add_variable(QueensVar::new(i))
-    //         .with_domain((0..4).map(|i| i as EnTy).collect())
-    //         .to(&mut b);
-    // }
-    // b.finalize()
 }
