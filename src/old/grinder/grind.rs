@@ -8,7 +8,7 @@ fn generate(from: usize, to: usize) -> VecDeque<(usize, usize)> {
     let mut tmp = VecDeque::with_capacity(2 * (to - from));
     for i in (from + 1)..to {
         tmp.push_back((from, i));
-        // tmp.push_back((i, from));
+        tmp.push_back((i, from));
     }
     tmp
 }

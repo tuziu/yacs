@@ -41,11 +41,11 @@ fn reject<T: VarDes>(config: &Vec<Variable<T>>, context: &Vec<Context>) -> bool 
 }
 
 fn accept<T: VarDes>(config: &Vec<Variable<T>>, context: &Vec<Context>) -> bool {
-    config.len() <= context.len()
+    context.len() == config.len()
 }
 
 fn first<T: VarDes>(config: &Vec<Variable<T>>, context: &mut Vec<Context>) -> bool {
-    let v = config[0].get_domain().first().unwrap();
+    let v = config[context.len()].get_domain().first().unwrap();
     context.push(Context {
         var_id: context.len(),
         domain_ele_id: 0,
@@ -69,7 +69,8 @@ fn backtrack_int<T: VarDes>(config: &Vec<Variable<T>>, context: &mut Vec<Context
     // print_context(context);
     if reject(config, context) {
         return false;
-    } else if accept(config, context) {
+    }
+    if accept(config, context) {
         return true;
     }
     let mut s = first(config, context);
@@ -86,14 +87,12 @@ fn print_solution(partial: &Vec<Context>) {
     let mut s = String::new();
     partial
         .iter()
-        .enumerate()
         .for_each(|i| s.push_str(&ele_to_str(i)));
     println!("{}", s);
 }
-fn ele_to_str(e: (usize, &Context)) -> String {
-    let a = e.1.partial.unwrap();
-    format!("| {} - {} |", e.0, a)
-    // String::new()
+fn ele_to_str(e: &Context) -> String {
+    let a = e.partial.unwrap();
+    format!("| {} - {} - {} |", e.var_id, e.domain_ele_id, a)
 }
 
 fn backtrack<T: VarDes>(config: &Vec<Variable<T>>) -> bool {
@@ -104,9 +103,9 @@ fn backtrack<T: VarDes>(config: &Vec<Variable<T>>) -> bool {
 }
 
 fn main() {
-    let n = 31;
+    let n = 4;
     // let config = buildQueens(n);
-    let config = buildSudoku();
+    let config = build_sudoku();
 
     backtrack(&config);
 }

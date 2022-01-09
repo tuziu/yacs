@@ -22,7 +22,7 @@ impl VarDes for QueensVar {
     }
 }
 
-pub fn buildQueens(n: usize) -> Vec<Variable<QueensVar>>{
+pub fn build_queens(n: usize) -> Vec<Variable<QueensVar>>{
     let config: Vec<Variable<QueensVar>> = (0..n)
         .map(|i| Variable::new(QueensVar::new(i), (0..n).map(|j| j as EnTy).collect(), i))
         .collect();

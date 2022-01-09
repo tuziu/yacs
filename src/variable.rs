@@ -38,9 +38,9 @@ impl<T: VarDes> Variable<T> {
         self.id
     }
 
-    // pub fn set_domain_value(&mut self, val: EnTy){
-    //     self.domain = vec![val];
-    // }
+    pub fn set_domain_value(&mut self, val: EnTy){
+        self.domain = vec![val];
+    }
     // pub fn revise(&self, other: &Self) -> ReviseResult {
     //     self.domain.revise(other.get_domain(), |x, y| {
     //         self.state.is_valid(&other.state, *x, *y)

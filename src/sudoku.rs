@@ -24,10 +24,46 @@ impl VarDes for SudokuVar {
     }
 }
 
-pub fn buildSudoku() -> Vec<Variable<SudokuVar>>{
-    let config: Vec<Variable<SudokuVar>> = (0..81)
+fn unary_constrainsts(config: &mut Vec<Variable<SudokuVar>>){
+    let v = vec![
+        (1, 0, 6),
+        (2, 0, 1),
+        (5, 0, 7),
+        (8, 0, 3),
+        (1, 1, 9),
+        (2, 1, 2),
+        (5, 1, 3),
+        (2, 3, 8),
+        (3, 3, 5),
+        (4,3,3),
+
+        (6,4,5),
+        (8,4,4),
+
+        (0,5,5),
+        (5,5,8),
+
+        (1,6,4),
+        (8,6,1),
+
+        (3,7,1),
+        (4,7,6),
+        (5,7,8),
+
+        (0,8,6),
+    ];
+
+    for i in v{
+        let j = i.0 + i.1 *9;
+        config[j].set_domain_value(i.2 - 1 );
+    }
+}
+
+pub fn build_sudoku() -> Vec<Variable<SudokuVar>>{
+    let mut config: Vec<Variable<SudokuVar>> = (0..81)
         .map(|i| Variable::new(SudokuVar::new(i/9,i%9), (0..9).map(|j| j as EnTy).collect(), i))
         .collect();
+    unary_constrainsts(&mut config);
     config
 }
 
