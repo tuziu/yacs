@@ -1,6 +1,6 @@
 // use crate::grinder::config_tank::ConfigTank;
 use crate::var_des::VarDes;
-use crate::variable::{EnTy, Variable};
+use crate::variable::Variable;
 
 #[derive(Copy, Clone)]
 pub struct QueensVar {
@@ -17,14 +17,22 @@ impl QueensVar {
 }
 
 impl VarDes for QueensVar {
-    fn is_valid(&self, other: &Self, current: EnTy, checked: EnTy) -> bool {
+    fn is_valid(&self, other: &Self, current: &Self::VarVal, checked: &Self::VarVal) -> bool {
         ((self.get_x() - other.get_x()).abs() != (current - checked).abs()) && current != checked
     }
+
+    type VarVal = i32;
 }
 
-pub fn build_queens(n: usize) -> Vec<Variable<QueensVar>>{
+pub fn build_queens(n: usize) -> Vec<Variable<QueensVar>> {
     let config: Vec<Variable<QueensVar>> = (0..n)
-        .map(|i| Variable::new(QueensVar::new(i), (0..n).map(|j| j as EnTy).collect(), i))
+        .map(|i| {
+            Variable::new(
+                QueensVar::new(i),
+                (0..n).map(|j| j as <QueensVar as VarDes>::VarVal).collect(),
+                i,
+            )
+        })
         .collect();
     config
 }

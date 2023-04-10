@@ -1,32 +1,28 @@
 use crate::var_des::VarDes;
-// use std::cell::Cell;
 
-pub type EnTy = i32;
 pub type VarId = usize;
 
-pub struct Variable<T> {
+pub struct Variable<T: VarDes> {
     // partial: Cell<Option<EnTy>>,
     state: T,
-    domain: Vec<EnTy>,
+    domain: Vec<T::VarVal>,
     id: VarId,
+    // domain_int: Domain,
 }
 
-
-
 impl<T: VarDes> Variable<T> {
-    pub fn new(t: T, d: Vec<EnTy>, i: usize) -> Variable<T> {
+    pub fn new(t: T, d: Vec<T::VarVal>, i: usize) -> Variable<T> {
         Variable {
             state: t,
-            id: i,
             domain: d,
-            // partial: Cell::new(Option::None),
+            id: i,
         }
     }
 
     pub fn state(&self) -> &T {
         &self.state
     }
-    pub fn get_domain(&self) -> &Vec<EnTy> {
+    pub fn get_domain(&self) -> &Vec<T::VarVal> {
         &self.domain
     }
 
@@ -38,16 +34,17 @@ impl<T: VarDes> Variable<T> {
         self.id
     }
 
-    pub fn set_domain_value(&mut self, val: EnTy){
+    pub fn set_domain_value(&mut self, val: T::VarVal) {
         self.domain = vec![val];
     }
     // pub fn revise(&self, other: &Self) -> ReviseResult {
-    //     self.domain.revise(other.get_domain(), |x, y| {
-    //         self.state.is_valid(&other.state, *x, *y)
-    //     })
+    //     // self.domain_int.revise(&other.domain_int, |x, y| {
+    //     //     self.state.is_valid(&other.state, *x)
+    //     // })
+    //     ReviseResult::new(1)
     // }
 
-    // pub fn restore(&self, rng: usize) {
-    //     self.domain.restore(rng);
-    // }
+    pub fn restore(&self, rng: usize) {
+        // self.domain_int.restore(rng);
+    }
 }

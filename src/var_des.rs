@@ -1,3 +1,11 @@
 pub trait VarDes<Other: ?Sized = Self> {
-    fn is_valid(&self, other: &Other, current: i32, checked: i32) -> bool;
+    type VarVal;
+    fn is_valid(&self, other: &Other, current: &Self::VarVal, checked: &Self::VarVal) -> bool;
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn wanted_api() {}
 }
