@@ -77,7 +77,7 @@ mod tests {
     // use crate::sudoku::VarDes::is_valid;
 
     fn is_valid_h(x: (usize, usize, i32), y: (usize, usize, i32)) -> bool {
-        SudokuVar::new(x.0, x.1).is_valid(&SudokuVar::new(y.0, y.1), x.2, y.2)
+        SudokuVar::new(x.0, x.1).is_valid(&SudokuVar::new(y.0, y.1), &x.2, &y.2)
     }
 
     #[test]

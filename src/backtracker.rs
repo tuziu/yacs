@@ -30,7 +30,7 @@ impl<T: VarDes> Context<T> {
             .iter()
             .enumerate()
             .filter(|x| x.1.is_none())
-            .map(|x| x.0 )
+            .map(|x| x.0)
             .collect()
     }
 
@@ -41,13 +41,30 @@ impl<T: VarDes> Context<T> {
         self.partials
             .iter()
             .enumerate()
-            .filter(|x| x.1.is_none())
+            .filter(|x| x.1.is_some())
             .map(|x| (x.0, x.1.unwrap()))
             .collect()
     }
+
+    fn set_partial(&mut self, var_id: VarId, value: T::VarVal) {
+        self.partials[var_id] = Some(value);
+    }
+
+    fn unset_partial(&mut self, var_id: VarId) {
+        self.partials[var_id] = None;
+    }
 }
 
-pub fn backtrack_int<T: VarDes>(config: &Vec<Variable<T>>, context: &mut Context<T>) -> bool
+pub fn backtrack<T: VarDes>(config: &Vec<Variable<T>>) -> Vec<T::VarVal>
+where
+    <T as VarDes>::VarVal: Copy,
+{
+    let mut contex = Context::new(config);
+    backtrack_int(config, &mut contex);
+    contex.partials.iter().map(|x| x.unwrap()).collect()
+}
+
+fn backtrack_int<T: VarDes>(config: &Vec<Variable<T>>, context: &mut Context<T>) -> bool
 where
     <T as VarDes>::VarVal: Copy,
 {
@@ -57,8 +74,12 @@ where
 
     let var_id = get_new_unnassigned_variable(config, context);
     for value in get_domain(config, var_id) {
-        if is_consistent(config, context, var_id, value) && backtrack_int(config, context) {
-            return true;
+        if is_consistent(config, context, var_id, value) {
+            context.set_partial(var_id, *value);
+            if backtrack_int(config, context) {
+                return true;
+            }
+            context.unset_partial(var_id);
         }
     }
     false
@@ -75,7 +96,7 @@ where
 {
     let partials = context.get_partials_with_enumeration();
     for (id, val) in partials {
-        if !config[var_id ]
+        if !config[var_id]
             .state()
             .is_valid(config[id].state(), value, &val)
         {
